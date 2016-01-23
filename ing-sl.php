@@ -10,6 +10,7 @@ add_action( 'plugins_loaded', function(){
 	if( defined( 'PODS_VERSION' ) && defined( 'EDD_SL_VERSION' ) ){
 		ingSL_load_classes();
 		add_action( 'init', [ '\ingSL\IngSL', 'listen' ], 1 );
+		add_action( 'init', [ '\ingSL\upgrade', 'listen'], 2 );
 		add_action( 'edd_activate_license', [ '\ingSL\IngSL', 'activate_license' ], 1 );
 		add_filter( 'edd_remote_license_activation_response', [ '\ingSL\IngSL', 'response' ] );
 		add_filter( 'pods_api_pre_save_pod_item_site', 'ingSL_pre_save_site', 10 );
