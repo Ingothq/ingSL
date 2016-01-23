@@ -15,11 +15,6 @@ namespace ingSL;
 class create {
 
 	/**
-	 * @var int
-	 */
-	const TRIAL_PRICE_ID = 1;
-
-	/**
 	 * @var \WP_User
 	 */
 	protected $user;
@@ -119,10 +114,10 @@ class create {
 
 		$cart_details = array();
 		$total = 0;
-		$download = IngSL::TRIAL_ID;
+		$download = ids::$trial_id;
 
 
-		$cart_details[ $download]  = array(
+		$cart_details[ $download ] = array(
 			'name'        => get_the_title( $download ),
 			'id'          => $download,
 			'item_number' => $download,
@@ -130,7 +125,7 @@ class create {
 			'subtotal'    => $price,
 			'quantity'    => 1,
 			'tax'         => 0,
-			'price_id'=> self::TRIAL_PRICE_ID
+			'price_id'    => ids::$trial_price_id
 		);
 
 		$total = $price;
@@ -182,8 +177,8 @@ class create {
 	 * @param int $payment_id
 	 */
 	public function make_license($payment_id ){
-		$cart_item['item_number']['options']['price_id'] = self::TRIAL_PRICE_ID;
-		$keys = \EDD_Software_Licensing::instance()->generate_license( IngSL::TRIAL_ID, $payment_id, 'default', $cart_item );
+		$cart_item['item_number']['options']['price_id'] = ids::$trial_price_id;
+		$keys = \EDD_Software_Licensing::instance()->generate_license( ids::$trial_id, $payment_id, 'default', $cart_item );
 		$this->license = pods_v( 0, $keys, 0 );
 		update_post_meta( $this->license, '	_ingsl_is_trial', true );
 	}

@@ -63,7 +63,7 @@ class upgrade {
 	 */
 	protected static function prepare_upgrade( $license_id ){
 		$upgrade_price_id = 1;
-		$upgrade     = edd_sl_get_upgrade_path( IngSL::TRIAL_ID, $upgrade_price_id );
+		$upgrade     = edd_sl_get_upgrade_path( ids::$trial_id, $upgrade_price_id );
 		$options     = array(
 			'price_id'   => $upgrade['price_id'],
 			'is_upgrade' => true,

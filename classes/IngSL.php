@@ -14,20 +14,6 @@ namespace ingSL;
 
 class IngSL {
 
-	/**
-	 * ID of trial download
-	 *
-	 * @todo fix this for live site
-	 */
-	const TRIAL_ID = 19849;
-
-	/**
-	 * ID of actual download
-	 *
-	 * @todo fix this for live site
-	 */
-	const DOWNLOAD_ID = 19847;
-
 	/** @var bool  */
 	protected static $trial = false;
 
@@ -109,7 +95,5 @@ class IngSL {
 	public static function maybe_conversion(){
 
 	}
-
-
 
 }

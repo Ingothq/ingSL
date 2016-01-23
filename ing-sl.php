@@ -8,7 +8,12 @@
  */
 add_action( 'plugins_loaded', function(){
 	if( defined( 'PODS_VERSION' ) && defined( 'EDD_SL_VERSION' ) ){
+
 		ingSL_load_classes();
+		if( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ){
+			\ingSL\ids::$download_id = 29;
+			\ingSL\ids::$trial_id = 30;
+		}
 		add_action( 'init', [ '\ingSL\IngSL', 'listen' ], 1 );
 		add_action( 'init', [ '\ingSL\upgrade', 'listen'], 2 );
 		add_action( 'edd_activate_license', [ '\ingSL\IngSL', 'activate_license' ], 1 );
