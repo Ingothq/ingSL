@@ -77,7 +77,7 @@ class IngSL {
 	 *
 	 * @returns array
 	 */
-	public static function response( $result ){
+	public static function activation_response( $result ){
 		$result[ 'trial' ] = (string) self::$trial;
 		$result[ 'license_code' ] = (string) self::$code;
 		$result[ 'ing_uid' ] =  self::$user->ID;
@@ -88,11 +88,46 @@ class IngSL {
 	}
 
 	/**
-	 * @TODO?
+	 * On license check response add trial indication
 	 *
-	 * @uses edd_complete_purchase
+	 * @uses "edd_remote_license_check_response"
+	 *
+	 * @param array $result
+	 * @param array $args
+	 *
+	 * @return array
 	 */
-	public static function maybe_conversion(){
+	public static function license_check_response( $result, $args, $license_id ){
+		if( ids::$trial_id == $args[ 'item_id' ]  ){
+			self::$trial = true;
+		}elseif( ids::$download_id == $args[ 'item_id' ] ){
+			self::$trial = false;
+		}elseif ( get_post_meta( $license_id, '_ingsl_is_trial', true ) && ! get_post_meta( $license_id, '_ingsl_upsold', true ) ) {
+			self::$trial = true;
+		}elseif( get_post_meta( $license_id, '_ingsl_is_trial', true ) && get_post_meta( $license_id, '_ingsl_upsold', true ) ){
+			self::$trial = false;
+		}else{
+			self::$trial = 'unknown';
+		}
+
+		$result[ 'trial' ] = self::$trial;
+
+		return $result;
+	}
+
+	/**
+	 * Check if upgrade of license is an upsell
+	 *
+	 * @uses "edd_sl_license_upgraded"
+	 */
+	public static function maybe_upsell( $license_id ){
+
+			if( get_post_meta( $license_id, '_ingsl_is_trial', true  ) && ! get_post_meta( $license_id, '_ingsl_upsold', true  ) ){
+				update_post_meta( $license_id, '_ingsl_upsold', 1  );
+				upgrade::ping_site( $license_id );
+
+			}
+
 
 	}
 

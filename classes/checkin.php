@@ -73,7 +73,7 @@ class checkin {
 	protected function set_user( \WP_User $user = null ){
 		if( is_a( $user, 'WP_User' ) ) {
 			$this->user = $user;
-			$this->data[ 'user' ] = $user;
+			$this->data[ 'user' ] = $user->ID;
 		}else{
 			$this->data[ 'user'] = (int) get_post_meta(  $this->data[ 'license' ], '_edd_sl_user_id', true );
 			$this->user = get_user_by( 'ID', $this->data[ 'user' ] );

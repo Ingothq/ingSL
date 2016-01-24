@@ -23,4 +23,7 @@ class ids {
 	/** @var int  */
 	public static $trial_price_id = 1;
 
+	/** @var int  */
+	public static $upgrade_id = 1;
+
 }

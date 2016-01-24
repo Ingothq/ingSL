@@ -180,7 +180,8 @@ class create {
 		$cart_item['item_number']['options']['price_id'] = ids::$trial_price_id;
 		$keys = \EDD_Software_Licensing::instance()->generate_license( ids::$trial_id, $payment_id, 'default', $cart_item );
 		$this->license = pods_v( 0, $keys, 0 );
-		update_post_meta( $this->license, '	_ingsl_is_trial', true );
+		update_post_meta( $this->license, '_ingsl_is_trial', 1 );
+		update_post_meta( $this->license, '_ingsl_upsold', 0 );
 	}
 
 }
