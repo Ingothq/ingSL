@@ -33,7 +33,7 @@ class IngSL {
 	 */
 	public static  function activate_license( $args ){
 		$args[ 'trial' ] = self::$trial;
-		new checkin( $args, self::$user );
+		//new checkin( $args, self::$user );
 
 	}
 
@@ -46,12 +46,9 @@ class IngSL {
 	 * @uses init
 	 */
 	public  static function listen(){
-		if( 'activate_license' == pods_v( 'edd_action', 'post', false, true )  ) {
-			if( is_email( pods_v( 'license', 'post', false, true ) ) ) {
-				$create = new create(
-					sanitize_email( pods_v( 'license', 'post' ) ),
-					pods_v( 'url', 'post' )
-				);
+		if( isset( $_POST[ 'edd_action' ], $_POST[ 'license' ] ) && 'activate_license' == $_POST[ 'edd_action' ]  ) {
+			if( is_email( $_POST[ 'license' ] ) ) {
+				$create = new create( sanitize_email( $_POST[ 'license' ] ) );
 				if( is_string( self::$code = $create->get_license_code() ) ){
 					self::$license_id  = $create->get_license_id();
 					$_POST[ 'license' ] = self::$code;
@@ -60,7 +57,7 @@ class IngSL {
 
 				}
 			}else{
-				self::$code = pods_v_sanitized( 'license', 'post' );
+				self::$code = strip_tags( $_POST[ 'license' ] );
 			}
 
 		}
@@ -122,11 +119,11 @@ class IngSL {
 	 */
 	public static function maybe_upsell( $license_id ){
 
-			if( get_post_meta( $license_id, '_ingsl_is_trial', true  ) && ! get_post_meta( $license_id, '_ingsl_upsold', true  ) ){
-				update_post_meta( $license_id, '_ingsl_upsold', 1  );
-				upgrade::ping_site( $license_id );
+		if( get_post_meta( $license_id, '_ingsl_is_trial', true  ) && ! get_post_meta( $license_id, '_ingsl_upsold', true  ) ){
+			update_post_meta( $license_id, '_ingsl_upsold', 1  );
+			upgrade::ping_site( $license_id );
 
-			}
+		}
 
 
 	}

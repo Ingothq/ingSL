@@ -7,7 +7,7 @@
  * Setup
  */
 add_action( 'plugins_loaded', function(){
-	if( defined( 'PODS_VERSION' ) && defined( 'EDD_SL_VERSION' ) ){
+	if(  defined( 'EDD_SL_VERSION' ) ){
 
 		ingSL_load_classes();
 		if( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ){

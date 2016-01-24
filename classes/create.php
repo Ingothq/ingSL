@@ -28,16 +28,13 @@ class create {
 
 	/**
 	 * @param string $email
-	 * @param string $url
 	 */
-	public function __construct( $email, $url ){
+	public function __construct( $email ){
 		$this->set_user( $email );
 		if ( is_object( $this->user ) ) {
 			$payment_id = $this->make_payment();
 			if ( is_numeric( $payment_id ) ) {
 				$this->make_license( $payment_id );
-				affiliateWP::add_visit();
-				$this->update_site( $url );
 			}
 
 		}
@@ -159,29 +156,20 @@ class create {
 	}
 
 	/**
-	 * Set/create registered site and its site/license association
-	 *
-	 * @param string $url
-	 *
-	 * @return int
-	 */
-	protected function update_site( $url ){
-		$site = new site( $url, $this->user, $this->license );
-		$site_id = $site->save();
-		return $site_id;
-	}
-
-	/**
 	 * Generate free trial license code
 	 *
 	 * @param int $payment_id
 	 */
-	public function make_license($payment_id ){
+	public function make_license( $payment_id ){
 		$cart_item['item_number']['options']['price_id'] = ids::$trial_price_id;
+		/** @var var array $keys */
 		$keys = \EDD_Software_Licensing::instance()->generate_license( ids::$trial_id, $payment_id, 'default', $cart_item );
-		$this->license = pods_v( 0, $keys, 0 );
-		update_post_meta( $this->license, '_ingsl_is_trial', 1 );
-		update_post_meta( $this->license, '_ingsl_upsold', 0 );
+
+		if ( is_array( $keys ) && isset( $keys[0]) ) {
+			$this->license = $keys[0];
+			update_post_meta( $this->license, '_ingsl_is_trial', 1 );
+			update_post_meta( $this->license, '_ingsl_upsold', 0 );
+		}
 	}
 
 }
