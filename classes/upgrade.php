@@ -64,7 +64,7 @@ class upgrade {
 		if ( is_string( $token ) && filter_var( $url, FILTER_VALIDATE_URL ) ) {
 			$url = trailingslashit( $url ) . 'wp-json/ingot/v1/trial/upgrade';
 			$license = \EDD_Software_Licensing::instance()->get_license_key( $license_id );
-			//var_dump( [ $token, $url , $license] );
+
 			$r = wp_remote_post( $url,
 				[
 					'body' => [
@@ -74,7 +74,7 @@ class upgrade {
 
 				]
 			);
-			//var_dump( $r );die();
+
 		}
 	}
 

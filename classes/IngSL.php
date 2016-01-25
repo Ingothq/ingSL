@@ -27,21 +27,69 @@ class IngSL {
 	protected static $license_id;
 
 	/**
-	 * When license is activated create checkin
+	 * After license activation, if is trial -- add to a list
 	 *
 	 * @used "edd_activate_license"
 	 */
-	public static  function activate_license( $args ){
-		$args[ 'trial' ] = self::$trial;
-		//new checkin( $args, self::$user );
+	public static  function activate_license( $data ){
+
+		$license    = ! empty( $data[ 'license' ] ) ? urldecode( $data[ 'license' ] ) : false;
+		$license_id = \EDD_Software_Licensing::instance()->get_license_by_key( $license );
+		$payment_id = get_post_meta( $license_id, '_edd_sl_payment_id', true );
+		$user_info  = edd_get_payment_meta_user_info( $payment_id );
+
+		self::save_license_meta( $data, $license_id, $user_info, $payment_id );
+
+		$item_id    = ! empty( $data[ 'item_id' ] ) ? absint( $data[ 'item_id' ] ) : false;
+
+		if(1 ==3 && class_exists( 'EDD_ConvertKit' ) && isset( $data[ 'details' ][ 'vertical' ] ) && ( self::$trial || ingSL::$trial == $item_id )  ) {
+			self::$trial = true;
+			$vertical = $data[ 'details' ][ 'vertical' ];
+			if(  ! in_array( $vertical, ingSL_verticals() ) ) {
+				return;
+			}
+
+			//$url        = isset( $data[ 'url' ] ) ? urldecode( $data[ 'url' ] ) : '';
+
+			$convert_kit = new \EDD_ConvertKit();
+			$convert_kit->subscribe_email( $user_info, $vertical, true );
+		}
 
 	}
 
+	public static function save_license_meta( $data, $license_id, $user_info, $payment_id ){
+
+		$metas = [
+			'datetime'   => current_time( 'mysql' ),
+			'url'        => isset( $data[ 'url' ] ) ? esc_url_raw( $data[ 'url' ] ) : false,
+			'user'       => $user_info,
+			'payment_id' => $payment_id
+		];
+
+
+
+		if( isset( $data[ 'details' ]) ){
+			$details = $data[ 'details' ];
+			foreach (
+				[
+					'wp_ver',
+					'ingot_ver',
+					'php_ver',
+					'vertical'
+				] as $detail
+			) {
+				$metas[ $detail ] = isset( $details[ $detail ] ) ? trim( $details[ $detail ] ) : false;
+			}
+		}
+
+		update_post_meta( $license_id, '_ingSL_details', $metas );
+
+
+
+	}
 
 	/**
 	 * Watch for license activation
-	 *
-	 * @TODO Update checks
 	 *
 	 * @uses init
 	 */
@@ -75,7 +123,7 @@ class IngSL {
 	 * @returns array
 	 */
 	public static function activation_response( $result ){
-		$result[ 'trial' ] = (string) self::$trial;
+		$result[ 'trial' ] = self::$trial;
 		$result[ 'license_code' ] = (string) self::$code;
 		$result[ 'ing_uid' ] =  self::$user->ID;
 		$result[ 'license_id' ] = self::$license_id;

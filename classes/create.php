@@ -147,7 +147,12 @@ class create {
 		);
 
 		$payment_id = edd_insert_payment( $purchase_data );
-
+		$keys =  \EDD_Software_Licensing::instance()->get_licenses_of_purchase( $payment_id );
+		if ( is_array( $keys ) && isset( $keys[0] ) && is_object( $keys[0] ) ) {
+			$this->license = $keys[0]->ID;
+			update_post_meta( $this->license, '_ingsl_is_trial', 1 );
+			update_post_meta( $this->license, '_ingsl_upsold', 0 );
+		}
 
 		// increase stats and log earnings
 		edd_update_payment_status( $payment_id, $data[ 'status' ] ) ;

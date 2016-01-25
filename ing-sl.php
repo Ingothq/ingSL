@@ -3,6 +3,7 @@
  Plugin Name: IngSL
  */
 
+
 /**
  * Setup
  */
@@ -21,9 +22,7 @@ add_action( 'plugins_loaded', function(){
 		add_action( 'edd_sl_license_upgraded', [ '\ingSL\ingSL', 'maybe_upsell' ]);
 		add_filter( 'edd_remote_license_activation_response', [ '\ingSL\IngSL', 'activation_response' ] );
 		add_filter( 'edd_remote_license_check_response', [ '\ingSL\IngSL', 'license_check_response' ], 10, 3 );
-		add_filter( 'pods_api_pre_save_pod_item_site', 'ingSL_pre_save_site', 10 );
 
-		\ingSL\upgrade::ping_site( 173 );
 	}
 
 
@@ -42,18 +41,24 @@ function ingSL_load_classes(){
 }
 
 /**
- * Sanatize savins of site URL
+ * List of acceptable verticals
  *
- * @uses 'pods_pre_save_item_site'
+ * @todo  pull from api
  *
- * @param $pieces
- *
- * @return mixed
+ * @return array
  */
-function ingSL_pre_save_site( $pieces ){
+function ingSL_verticals(){
+	$verticals = [
+		'startup',
+		'store',
+		'membership',
+		'non-profit',
+		'wp',
+		'media',
+		'inbound',
+	];
 
-		$pieces[ 'fields' ][ 'url' ][ 'value' ] = esc_url_raw( $pieces[ 'fields' ][ 'url' ][ 'value' ] );
-
-		return $pieces;
+	return $verticals;
 
 }
+
