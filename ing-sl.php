@@ -1,8 +1,13 @@
 <?php
 /**
  Plugin Name: IngSL
+ Plugin Version: 0.1.0
  */
 
+/**
+ * Version
+ */
+define( 'ING_SL_VER', '0.1.0' );
 
 /**
  * Setup
